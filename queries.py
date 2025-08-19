@@ -81,8 +81,7 @@ SELECT r.name, count(s.id)
 FROM rooms r
 FULL JOIN students s ON r.id = s.room
 GROUP BY r.name, r.id
-ORDER BY r.id
-LIMIT 20;
+ORDER BY r.id;
 """
 
 rooms_with_smallest_avg_age = """
@@ -118,3 +117,7 @@ FROM students
 WHERE is_instant = TRUE)
 SELECT DISTINCT room 
 FROM dense_rank_sex WHERE cnt = 2"""
+
+create_indexes = """
+CREATE INDEX IF NOT EXISTS indx_students_for_join ON students(room);
+CREATE INDEX IF NOT EXISTS indx_rooms_for_join ON rooms(id)"""

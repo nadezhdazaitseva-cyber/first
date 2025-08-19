@@ -1,5 +1,6 @@
 # data_processor.py
-from queries import create_rooms_table, create_students_table, create_func_and_trigger, insert_rooms, insert_students
+from queries import create_rooms_table, create_students_table, create_func_and_trigger, insert_rooms, insert_students, \
+    create_indexes
 from database import DatabaseManager
 
 
@@ -11,6 +12,7 @@ class DataProcessor:
         self.db_manager.execute_query(create_rooms_table)
         self.db_manager.execute_query(create_students_table)
         self.db_manager.execute_query(create_func_and_trigger)
+        self.db_manager.execute_query(create_indexes)
         self.db_manager.commit()
         print("Database schema initialized successfully.")
 
@@ -21,8 +23,8 @@ class DataProcessor:
         self.db_manager.cursor.executemany(insert_rooms, room_tuples)
         self.db_manager.cursor.executemany(insert_students, student_tuples)
         self.db_manager.commit()
-        print(f"Successfully inserted {len(rooms_data)} rooms.")
-        print(f"Successfully inserted {len(student_tuples)} students.")
+     #  print(f"Successfully inserted {len(rooms_data)} rooms.")
+     #  print(f"Successfully inserted {len(student_tuples)} students.")
 
     def run_queries(self, queries_to_run):
         results = {}
