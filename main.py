@@ -4,6 +4,7 @@ from database import DatabaseManager
 from data_handler import DataHandler
 from data_processor import DataProcessor
 import queries as sql_queries
+import xml_generator
 
 
 def main():
@@ -32,18 +33,39 @@ def main():
         data_processor.insert_data(rooms_data, students_data)
 
         # Run and handle queries
-        queries_to_run = {
-            'rooms_with_biggest_age_difference': sql_queries.rooms_with_biggest_age_difference,
-            'rooms_with_smallest_avg_age': sql_queries.rooms_with_smallest_avg_age,
+
+        all_queries = {
+            '1': {'name': 'Rooms with biggest age difference', 'query': sql_queries.rooms_with_biggest_age_difference},
+            '2': {'name': 'Rooms with smallest avg age', 'query': sql_queries.rooms_with_smallest_avg_age},
+            '3': {'name': 'List of rooms and students count', 'query': sql_queries.list_of_rooms_students},
+            '4': {'name': 'Rooms with different gender students',
+                  'query': sql_queries.rooms_with_different_gender_students}
         }
-        results = data_processor.run_queries(queries_to_run)
+
+        # For user
+        print("\n Select a query:")
+        for key, value in all_queries.items():
+            print(f"  {key}. {value['name']}")
+
+        choice = input("Enter the request number : ")
+
+        selected_queries = {}
+        if choice in all_queries:
+            query_key = choice
+            selected_queries[all_queries[query_key]['name']] = all_queries[query_key]['query']
+        else:
+            print("Incorrect number. No request will be executed.")
+
+        results = data_processor.run_queries(selected_queries)
 
         # Handle output format
-        format_choice = input("Enter output format (json or plain): ")
-        if format_choice.lower() == 'json':
+        format_choice = input("Enter output format (j - json, x - xml или p - plain): ")
+        if format_choice.lower() == 'j':
             with open('results.json', 'w') as f:
                 json.dump(results, f, indent=2)
             print("Results saved to results.json")
+        elif format_choice.lower() == 'x':
+            xml_generator.save_xml(results)
         else:
             for query_name, result in results.items():
                 print(f"\n--- Results for: {query_name} ---")

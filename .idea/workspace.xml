@@ -5,11 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="df1d7c4b-7ed4-4a52-8815-1e36fbfa33d9" name="Default Changelist" comment="Initial Commit">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/xml_generator.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data_processor.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_processor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/queries.py" beforeDir="false" afterPath="$PROJECT_DIR$/queries.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/INNOWISE/lib/python3.8/site-packages/pip/_vendor/idna/core.py" beforeDir="false" afterPath="$PROJECT_DIR$/INNOWISE/lib/python3.8/site-packages/pip/_vendor/idna/core.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
