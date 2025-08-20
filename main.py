@@ -69,7 +69,7 @@ def main():
         else:
             for query_name, result in results.items():
                 print(f"\n--- Results for: {query_name} ---")
-                print(result)
+                [print(*el) for el in result]
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")

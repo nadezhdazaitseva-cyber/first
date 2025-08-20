@@ -99,7 +99,7 @@ LIMIT 5;
 rooms_with_biggest_age_difference = """
 SELECT
 r.name,
-MAX(DATE_PART('year', age(CURRENT_DATE, birthday))) - MIN(DATE_PART('year', age(CURRENT_DATE, birthday))) AS age_diff
+(MAX(DATE_PART('year', age(CURRENT_DATE, birthday))) - MIN(DATE_PART('year', age(CURRENT_DATE, birthday))))::INTEGER AS age_diff
 FROM rooms r
 JOIN students s ON r.id = s.room
 WHERE s.is_instant = TRUE
