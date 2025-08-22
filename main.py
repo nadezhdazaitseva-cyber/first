@@ -1,11 +1,10 @@
 # main.py
 import json
-from database import DatabaseManager
-from data_handler import DataHandler
-from data_processor import DataProcessor
+from work_with_DB.database import DatabaseManager
+from work_with_DB.data_handler import DataHandler
+from work_with_DB.data_processor import DataProcessor
 import queries as sql_queries
 import xml_generator
-
 
 def main():
     rooms = "https://raw.githubusercontent.com/nadezhdazaitseva-cyber/first/refs/heads/main/rooms.json"
@@ -24,7 +23,7 @@ Do you want to use the default connection parameters [y - YES, n - NO]?
 If not[n], you can enter your own parameters.''')
     
     input_db_params = input().strip().lower()
-    
+
     if input_db_params == 'y':
         print("Using default connection parameters.")
         db_manager = DatabaseManager(db_params)

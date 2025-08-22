@@ -1,7 +1,7 @@
 # data_processor.py
 from queries import create_rooms_table, create_students_table, create_func_and_trigger, insert_rooms, insert_students, \
     create_indexes
-from database import DatabaseManager
+from .database import DatabaseManager
 
 
 class DataProcessor:
