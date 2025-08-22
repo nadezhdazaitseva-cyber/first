@@ -45,8 +45,6 @@ def main() -> None:
         data_processor.insert_data(rooms_data, students_data)
 
        
-
-
         # Dynamically load all DML queries for the user interface
         all_user_queries: Dict[str, str] = file_reader.load_all_sql_queries_from_dir('queries_f/DML')
         

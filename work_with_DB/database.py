@@ -26,14 +26,21 @@ class DatabaseManager:
             print("Database connection closed.")
 
     def execute_query(self, query, params=None):
+        if self.cursor is None:
+            raise RuntimeError("Database cursor is not initialized. Did you call connect()?")
+
         try:
             self.cursor.execute(query, params)
             if query.strip().lower().startswith(('select', 'with')):
                 return self.cursor.fetchall()
         except psycopg2.Error as e:
             print(f"Database error during query execution: {e}")
-            self.conn.rollback()  # Rollback on error
+            if self.conn is not None:
+                self.conn.rollback()  # Rollback on error
             raise
 
-    def commit(self):
-        self.conn.commit()
+    def commit(self) -> None:
+        if self.conn is not None:
+            self.conn.commit()
+        else:
+            print("No active database connection to commit.")

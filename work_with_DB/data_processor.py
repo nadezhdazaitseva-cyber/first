@@ -17,6 +17,9 @@ class DataProcessor:
         print("Database schema initialized successfully.")
 
     def insert_data(self, rooms_data, students_data):
+        if self.db_manager.cursor is None:
+            raise RuntimeError("Database cursor is not initialized. Did you call connect()?")
+
         room_tuples = [(room['id'], room['name']) for room in rooms_data]
         student_tuples = [(student['id'], student['birthday'], student['name'], student['room'], student['sex']) for student in students_data]
 
