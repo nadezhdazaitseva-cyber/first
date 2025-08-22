@@ -6,9 +6,10 @@ from work_with_DB.data_processor import DataProcessor
 import queries as sql_queries
 import xml_generator
 
+
 def main():
-    rooms = "https://raw.githubusercontent.com/nadezhdazaitseva-cyber/first/refs/heads/main/rooms.json"
-    students = "https://raw.githubusercontent.com/nadezhdazaitseva-cyber/first/refs/heads/main/students.json"
+    rooms = "https://raw.githubusercontent.com/nadezhdazaitseva-cyber/first/refs/heads/new_view/parsed_files/rooms.json"
+    students = "https://raw.githubusercontent.com/nadezhdazaitseva-cyber/first/refs/heads/new_view/parsed_files/students.json"
 
     # Default database connection parameters
     db_params = {
@@ -65,28 +66,49 @@ If not[n], you can enter your own parameters.''')
         for key, value in all_queries.items():
             print(f"  {key}. {value['name']}")
 
-        choice = input("Enter the request number : ")
+        choice = ''
+        while choice.lower() != 'q':
+            choice = input("Enter the request number (or 'q' to quit): ")
 
-        selected_queries = {}
-        if choice in all_queries:
+            # Check if the user wants to quit
+            if choice.lower() == 'q':
+                print("Exiting the program.")
+                break
+            
+            # Check if the choice is a valid query number
+            if choice not in all_queries:
+                print("Invalid request number. Please try again.")
+                continue  # Skips the rest of the loop and re-prompts for a choice
+            
+            # Process the valid choice
             query_key = choice
-            selected_queries[all_queries[query_key]['name']] = all_queries[query_key]['query']
+            selected_queries = {
+                all_queries[query_key]['name']: all_queries[query_key]['query']
+            }
             results = data_processor.run_queries(selected_queries)
 
             # Handle output format
-            format_choice = input("Enter output format (j - json, x - xml или p - plain): ")
-            if format_choice.lower() == 'j':
-                with open('results.json', 'w') as f:
-                    json.dump(results, f, indent=2)
+            format_choice = ''
+            while format_choice.lower() not in ['j', 'x', 'p', 'q']:
+                format_choice = input("Enter output format (j - json, x - xml, p - plain, or q - quit): ")
+
+                if format_choice.lower() == 'j':
+                    with open('results.json', 'w') as f:
+                        json.dump(results, f, indent=2)
                     print("Results saved to results.json")
-            elif format_choice.lower() == 'x':
-                xml_generator.save_xml(results)
-            else:
-                for query_name, result in results.items():
-                    print(f"\n--- Results for: {query_name} ---")
-                    [print(*el) for el in result]
-        else:
-            print("Incorrect number. No request will be executed.")
+                elif format_choice.lower() == 'x':
+                    xml_generator.save_xml(results)
+                    print("Results saved to XML file.")
+                elif format_choice.lower() == 'p':
+                    for query_name, result in results.items():
+                        print(f"\n--- Results for: {query_name} ---")
+                        for el in result:
+                            print(el) # Corrected print statement for tuples/lists
+                elif format_choice.lower() == 'q':
+                    print("Exiting output format selection.")
+                    break
+                else:
+                    print("Invalid format choice. Please try again.")
 
 
     except Exception as e:
