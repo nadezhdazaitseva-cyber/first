@@ -1,43 +1,30 @@
 # main.py
 import json
+import os
+from dotenv import load_dotenv
 from work_with_DB.database import DatabaseManager
 from work_with_DB.data_handler import DataHandler
 from work_with_DB.data_processor import DataProcessor
 import queries as sql_queries
 import xml_generator
 
+# Load environment variables from .env file
+load_dotenv()
 
 def main():
     rooms = "https://raw.githubusercontent.com/nadezhdazaitseva-cyber/first/refs/heads/new_view/parsed_files/rooms.json"
     students = "https://raw.githubusercontent.com/nadezhdazaitseva-cyber/first/refs/heads/new_view/parsed_files/students.json"
 
-    # Default database connection parameters
+    # Get database connection parameters from environment variables
     db_params = {
-        'host': 'localhost',
-        'database': 'postgres',
-        'user': 'postgres',
-        'password': '123',
-        'port': '5432'
+        'host': os.getenv('DB_HOST'),
+        'database': os.getenv('DB_DATABASE'),
+        'user': os.getenv('DB_USER'),
+        'password': os.getenv('DB_PASSWORD'),
+        'port': os.getenv('DB_PORT')
     }
-    print('''We are going to work with the PostgreSQL database.
-Do you want to use the default connection parameters [y - YES, n - NO]?
-If not[n], you can enter your own parameters.''')
     
-    input_db_params = input().strip().lower()
-
-    if input_db_params == 'y':
-        print("Using default connection parameters.")
-        db_manager = DatabaseManager(db_params)
-    elif input_db_params == 'n':
-        db_params['host'] = input("Input host:").strip().lower()
-        db_params['database'] = input("Input database name:").strip().lower()
-        db_params['user'] = input("Input user name:").strip().lower()
-        db_params['password'] = input("Input password:").strip() 
-        db_params['port'] = input("Input port:").strip().lower()
-        db_manager = DatabaseManager(db_params)
-    else:
-        print("Incorrect input. Using default connection parameters.")
-        db_manager = DatabaseManager(db_params)
+    db_manager = DatabaseManager(db_params)
 
     try:
         db_manager.connect()
@@ -114,7 +101,9 @@ If not[n], you can enter your own parameters.''')
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
     finally:
-        db_manager.close()
+        # Check if db_manager was created before trying to close it
+        if 'db_manager' in locals() and db_manager:
+            db_manager.close()
 
 
 if __name__ == '__main__':
