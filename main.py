@@ -5,15 +5,19 @@ from dotenv import load_dotenv
 from work_with_DB.database import DatabaseManager
 from work_with_DB.data_handler import DataHandler
 from work_with_DB.data_processor import DataProcessor
+import work_with_DB.file_reader as file_reader
 import queries as sql_queries
 import xml_generator
+from typing import Dict, Any, List, Optional
 
 # Load environment variables from .env file
 load_dotenv()
 
-def main():
+def main() -> None:
+    # URLs to fetch data from
     rooms = "https://raw.githubusercontent.com/nadezhdazaitseva-cyber/first/refs/heads/new_view/parsed_files/rooms.json"
     students = "https://raw.githubusercontent.com/nadezhdazaitseva-cyber/first/refs/heads/new_view/parsed_files/students.json"
+
 
     # Get database connection parameters from environment variables
     db_params = {
@@ -24,9 +28,11 @@ def main():
         'port': os.getenv('DB_PORT')
     }
     
+    # Initialize db_manager to None before the try block to prevent the unbound error
     db_manager = DatabaseManager(db_params)
 
     try:
+ 
         db_manager.connect()
         data_handler = DataHandler(rooms, students)
         data_processor = DataProcessor(db_manager)
@@ -38,15 +44,18 @@ def main():
         rooms_data, students_data = data_handler.fetch_and_parse()
         data_processor.insert_data(rooms_data, students_data)
 
-        # Run and handle queries
+       
 
-        all_queries = {
-            '1': {'name': 'Rooms with biggest age difference', 'query': sql_queries.rooms_with_biggest_age_difference},
-            '2': {'name': 'Rooms with smallest avg age', 'query': sql_queries.rooms_with_smallest_avg_age},
-            '3': {'name': 'List of rooms and students count', 'query': sql_queries.list_of_rooms_students},
-            '4': {'name': 'Rooms with different gender students',
-                  'query': sql_queries.rooms_with_different_gender_students}
-        }
+
+        # Dynamically load all DML queries for the user interface
+        all_user_queries: Dict[str, str] = file_reader.load_all_sql_queries_from_dir('queries_f/DML')
+        
+        # Create a numbered menu from the loaded queries
+        all_queries: Dict[str, Dict[str, str]] = {}
+        for i, query_name in enumerate(all_user_queries, start=1):
+            all_queries[str(i)] = {
+                'name': query_name.replace('_', ' ').title(),
+                'query': all_user_queries.get(query_name, '')}
 
         # For user
         print("\n Select a query:")
