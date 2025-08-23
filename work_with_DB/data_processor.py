@@ -1,6 +1,5 @@
 # data_processor.py
-from queries import create_rooms_table, create_students_table, create_func_and_trigger, insert_rooms, insert_students, \
-    create_indexes
+from queries import insert_rooms, insert_students
 from .database import DatabaseManager
 
 
@@ -8,11 +7,17 @@ class DataProcessor:
     def __init__(self, db_manager: DatabaseManager):
         self.db_manager = db_manager
 
-    def initialize_tables(self):
-        self.db_manager.execute_query(create_rooms_table)
-        self.db_manager.execute_query(create_students_table)
-        self.db_manager.execute_query(create_func_and_trigger)
-        self.db_manager.execute_query(create_indexes)
+    def initialize_tables(self, queries=None):
+        if queries is None:
+            print("No queries provided for initializing tables.")
+            return
+
+        for query_name, query in queries.items():
+            try:
+                self.db_manager.execute_query(query)
+                print(f"Executed: {query_name}")
+            except Exception as e:
+                print(f"Error executing {query_name}: {e}")
         self.db_manager.commit()
         print("Database schema initialized successfully.")
 

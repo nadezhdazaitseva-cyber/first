@@ -15,10 +15,12 @@ load_dotenv()
 
 def main() -> None:
     # URLs to fetch data from
-    rooms = "https://raw.githubusercontent.com/nadezhdazaitseva-cyber/first/refs/heads/new_view/parsed_files/rooms.json"
-    students = "https://raw.githubusercontent.com/nadezhdazaitseva-cyber/first/refs/heads/new_view/parsed_files/students.json"
+    # urls = {'rooms' : "https://raw.githubusercontent.com/nadezhdazaitseva-cyber/first/refs/heads/new_view/parsed_files/rooms.json",
+    # 'students' : "https://raw.githubusercontent.com/nadezhdazaitseva-cyber/first/refs/heads/new_view/parsed_files/students.json" }
 
-
+    rooms = "https://raw.githubusercontent.com/nadezhdazaitseva-cyber/first/refs/heads/main/rooms.json"
+    students = "https://raw.githubusercontent.com/nadezhdazaitseva-cyber/first/refs/heads/main/students.json"
+    
     # Get database connection parameters from environment variables
     db_params = {
         'host': os.getenv('DB_HOST'),
@@ -32,13 +34,14 @@ def main() -> None:
     db_manager = DatabaseManager(db_params)
 
     try:
- 
         db_manager.connect()
-        data_handler = DataHandler(rooms, students)
-        data_processor = DataProcessor(db_manager)
 
         # Initialize tables and triggers
-        data_processor.initialize_tables()
+        data_processor = DataProcessor(db_manager)
+        create_queries: Dict[str, str] = file_reader.load_all_sql_queries_from_dir('queries_f/DDL')
+        data_processor.initialize_tables(create_queries)
+
+        data_handler = DataHandler(rooms, students)
 
         # Fetch and insert data
         rooms_data, students_data = data_handler.fetch_and_parse()
@@ -46,7 +49,7 @@ def main() -> None:
 
        
         # Dynamically load all DML queries for the user interface
-        all_user_queries: Dict[str, str] = file_reader.load_all_sql_queries_from_dir('queries_f/DML')
+        all_user_queries: Dict[str, str] = file_reader.load_all_sql_queries_from_dir('queries_f/DML', start=r"^(?!insert).*\.sql")
         
         # Create a numbered menu from the loaded queries
         all_queries: Dict[str, Dict[str, str]] = {}

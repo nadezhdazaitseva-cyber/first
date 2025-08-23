@@ -1,5 +1,5 @@
 # file_reader.py
-
+import re
 import os
 from typing import Dict, Any
 
@@ -20,7 +20,7 @@ def read_sql_file(file_path: str) -> str:
         print(f"Error: SQL file not found at {file_path}")
         return ""
 
-def load_all_sql_queries_from_dir(directory: str) -> Dict[str, str]:
+def load_all_sql_queries_from_dir(directory: str, start: str = r".*\.sql") -> Dict[str, str]:
     """
     Loads all SQL queries from .sql files in a specified directory.
     
@@ -32,13 +32,16 @@ def load_all_sql_queries_from_dir(directory: str) -> Dict[str, str]:
                         and values are the query strings.
     """
     queries = {}
+    pattern = re.compile(start) # Compile the regex pattern once    
     if not os.path.exists(directory):
         print(f"Directory not found: {directory}")
         return queries
 
     for filename in os.listdir(directory):
-        if filename.endswith(".sql"):
+        if pattern.match(filename):
             file_path = os.path.join(directory, filename)
             query_name = os.path.splitext(filename)[0]
             queries[query_name] = read_sql_file(file_path)
     return queries
+
+    
