@@ -1,6 +1,5 @@
 # database.py
 import psycopg2
-from psycopg2 import sql
 
 
 class DatabaseManager:
@@ -27,7 +26,7 @@ class DatabaseManager:
 
     def execute_query(self, query, params=None):
         if self.cursor is None:
-            raise RuntimeError("Database cursor is not initialized. Did you call connect()?")
+            raise RuntimeError("Database cursor is not initialized.")
 
         try:
             self.cursor.execute(query, params)

@@ -6,31 +6,27 @@ from work_with_DB.database import DatabaseManager
 from work_with_DB.data_handler import DataHandler
 from work_with_DB.data_processor import DataProcessor
 import work_with_DB.file_reader as file_reader
-import queries as sql_queries
 import xml_generator
-from typing import Dict, Any, List, Optional
+from typing import Dict
+
 
 # Load environment variables from .env file
 load_dotenv()
 
+
 def main() -> None:
     # URLs to fetch data from
-    # urls = {'rooms' : "https://raw.githubusercontent.com/nadezhdazaitseva-cyber/first/refs/heads/new_view/parsed_files/rooms.json",
-    # 'students' : "https://raw.githubusercontent.com/nadezhdazaitseva-cyber/first/refs/heads/new_view/parsed_files/students.json" }
-
     rooms = "https://raw.githubusercontent.com/nadezhdazaitseva-cyber/first/refs/heads/main/rooms.json"
     students = "https://raw.githubusercontent.com/nadezhdazaitseva-cyber/first/refs/heads/main/students.json"
-    
     # Get database connection parameters from environment variables
     db_params = {
         'host': os.getenv('DB_HOST'),
         'database': os.getenv('DB_DATABASE'),
         'user': os.getenv('DB_USER'),
         'password': os.getenv('DB_PASSWORD'),
-        'port': os.getenv('DB_PORT')
+        'port': os.getenv('DB_PORT'),
     }
-    
-    # Initialize db_manager to None before the try block to prevent the unbound error
+    # Initialize db_manager
     db_manager = DatabaseManager(db_params)
 
     try:
@@ -38,7 +34,9 @@ def main() -> None:
 
         # Initialize tables and triggers
         data_processor = DataProcessor(db_manager)
-        create_queries: Dict[str, str] = file_reader.load_all_sql_queries_from_dir('queries_f/DDL')
+        create_queries: Dict[str, str] = file_reader.load_queries_from_dir(
+            'queries_f/DDL'
+        )
         data_processor.initialize_tables(create_queries)
 
         data_handler = DataHandler(rooms, students)
@@ -47,10 +45,13 @@ def main() -> None:
         rooms_data, students_data = data_handler.fetch_and_parse()
         data_processor.insert_data(rooms_data, students_data)
 
-       
         # Dynamically load all DML queries for the user interface
-        all_user_queries: Dict[str, str] = file_reader.load_all_sql_queries_from_dir('queries_f/DML', start=r"^(?!insert).*\.sql")
-        
+        all_user_queries: Dict[str, str] = file_reader.load_queries_from_dir(
+            'queries_f/DML',
+            start=(
+                r"^(?!insert).*\.sql"
+            )
+        )
         # Create a numbered menu from the loaded queries
         all_queries: Dict[str, Dict[str, str]] = {}
         for i, query_name in enumerate(all_user_queries, start=1):
@@ -71,12 +72,13 @@ def main() -> None:
             if choice.lower() == 'q':
                 print("Exiting the program.")
                 break
-            
+
             # Check if the choice is a valid query number
             if choice not in all_queries:
                 print("Invalid request number. Please try again.")
-                continue  # Skips the rest of the loop and re-prompts for a choice
-            
+                # Skips the rest of the loop and re-prompts for a choice
+                continue
+
             # Process the valid choice
             query_key = choice
             selected_queries = {
@@ -87,7 +89,9 @@ def main() -> None:
             # Handle output format
             format_choice = ''
             while format_choice.lower() not in ['j', 'x', 'p', 'q']:
-                format_choice = input("Enter output format (j - json, x - xml, p - plain, or q - quit): ")
+                format_choice = input(
+                    '''Enter output format:
+(j - json, x - xml, p - plain, or q - quit): ''')
 
                 if format_choice.lower() == 'j':
                     with open('results.json', 'w') as f:
@@ -100,14 +104,13 @@ def main() -> None:
                     for query_name, result in results.items():
                         print(f"\n--- Results for: {query_name} ---")
                         for el in result:
-                            print(el) # Corrected print statement for tuples/lists
+                            # Corrected print statement for tuples/lists
+                            print(el)
                 elif format_choice.lower() == 'q':
                     print("Exiting output format selection.")
                     break
                 else:
                     print("Invalid format choice. Please try again.")
-
-
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
     finally:

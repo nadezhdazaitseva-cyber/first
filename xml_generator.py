@@ -7,8 +7,8 @@ def generate_xml(data):
     """
     Generates an XML document from a dictionary with query results.
 
-    :param data: A dictionary where the key is the query name and the value is —
-                 a list of tuples (results of an SQL query).
+    :param data: A dictionary where the key is the query name and the 
+    value is — a list of tuples (results of an SQL query).
     :return: A byte string with a formatted XML document.
     """
     # Creating a root <results> element using lxml.etree.Element
@@ -29,7 +29,12 @@ def generate_xml(data):
                 column_element = et.SubElement(row_element, "column")
                 column_element.text = str(value)
 
-    return et.tostring(root, pretty_print=True, xml_declaration=True, encoding='UTF-8')
+    return et.tostring(
+        root,
+        pretty_print=True,
+        xml_declaration=True,
+        encoding='UTF-8'
+    )
 
 
 def save_xml(data, filename="results.xml"):

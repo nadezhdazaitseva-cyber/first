@@ -5,8 +5,7 @@ from urllib.request import urlopen
 
 
 class DataHandler:
-   # def __init__(self, urls: dict):
-    #    self.urls = urls
+
     def __init__(self, rooms_url, students_url):
         self.rooms_url = rooms_url
         self.students_url = students_url

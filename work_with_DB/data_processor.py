@@ -23,16 +23,23 @@ class DataProcessor:
 
     def insert_data(self, rooms_data, students_data):
         if self.db_manager.cursor is None:
-            raise RuntimeError("Database cursor is not initialized. Did you call connect()?")
+            raise RuntimeError("Database cursor is not initialized.")
 
         room_tuples = [(room['id'], room['name']) for room in rooms_data]
-        student_tuples = [(student['id'], student['birthday'], student['name'], student['room'], student['sex']) for student in students_data]
+        student_tuples = [
+            (
+                student['id'],
+                student['birthday'],
+                student['name'],
+                student['room'],
+                student['sex']
+            )
+            for student in students_data
+        ]
 
         self.db_manager.cursor.executemany(insert_rooms, room_tuples)
         self.db_manager.cursor.executemany(insert_students, student_tuples)
         self.db_manager.commit()
-     #  print(f"Successfully inserted {len(rooms_data)} rooms.")
-     #  print(f"Successfully inserted {len(student_tuples)} students.")
 
     def run_queries(self, queries_to_run):
         results = {}
