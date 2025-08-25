@@ -65,6 +65,7 @@ def main() -> None:
         "--data",
         nargs="+",
         required=True,
+        metavar="table=path.json",    
         help="""Pairs "table=path.json"
         (rooms=parsed_files/rooms.json students=parsed_files/students.json)""",
     )
